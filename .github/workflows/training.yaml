@@ -32,14 +32,14 @@ jobs:
           mlflow run MLproject/ --no-conda
 
       - name: Set up Git LFS
-         run: |
-           git config --global user.name ${{ secrets.USERNAME }}
-           git config --global user.email ${{ secrets.EMAIL }}
-           git lfs install
-           git lfs track "mlruns/**"
-           git add .gitattributes
-           git commit -m "Track large files in mlruns with Git LFS" || true
-           git push origin main
+        run: |
+          git config --global user.name ${{ secrets.USERNAME }}
+          git config --global user.email ${{ secrets.EMAIL }}
+          git lfs install
+          git lfs track "mlruns/**"
+          git add .gitattributes
+          git commit -m "Track large files in mlruns with Git LFS" || true
+          git push origin main
 
       - name: Commit and Push Artifacts
         run: |
@@ -53,6 +53,7 @@ jobs:
           git add mlruns/ MLproject/best_params.json
           git commit -m "Auto-update model artifacts and parameters [skip ci]" || echo "No changes to commit"
           git push
+
 
       - name: Build Docker Image with MLflow
         run: |
