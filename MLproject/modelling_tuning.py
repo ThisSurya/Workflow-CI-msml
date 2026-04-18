@@ -3,6 +3,21 @@ import tracemalloc
 import mlflow
 import numpy as np
 import pandas as pd
+import sklearn.utils
+# Monkey patch for scikit-learn compatibility with skopt
+if not hasattr(sklearn.utils, 'check_pandas_support'):
+    try:
+        from sklearn.utils import _optional_dependencies
+        sklearn.utils.check_pandas_support = _optional_dependencies.check_pandas_support
+    except ImportError:
+        def check_pandas_support():
+            try:
+                import pandas
+                return pandas
+            except ImportError:
+                return None
+        sklearn.utils.check_pandas_support = check_pandas_support
+
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
