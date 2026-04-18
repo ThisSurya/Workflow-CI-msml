@@ -1,0 +1,70 @@
+name: Model Training and Artifact Logging
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow==3.11.1 scikit-learn==1.8.0 pandas==2.3.3 numpy==2.4.2 scikit-optimize==0.10.1 psutil==7.2.2 pyarrow==23.0.1 scipy==1.17.1 cloudpickle==3.1.2
+
+      - name: Run MLflow Training
+        run: |
+          mlflow run MLproject/ --no-conda
+
+      - name: Set up Git LFS
+         run: |
+           git config --global user.name ${{ secrets.USERNAME }}
+           git config --global user.email ${{ secrets.EMAIL }}
+           git lfs install
+           git lfs track "mlruns/**"
+           git add .gitattributes
+           git commit -m "Track large files in mlruns with Git LFS" || true
+           git push origin main
+
+      - name: Commit and Push Artifacts
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Move best_params.json to a more visible place if it's inside MLproject or wherever it was generated
+          # Based on modelling_tuning.py, it's generated in the working directory of the script.
+          # If mlflow run starts it in MLproject/, then it's in MLproject/best_params.json
+
+          git add mlruns/ MLproject/best_params.json
+          git commit -m "Auto-update model artifacts and parameters [skip ci]" || echo "No changes to commit"
+          git push
+
+      - name: Build Docker Image with MLflow
+        run: |
+          mlflow models build-docker -m "models:/RandomForestRegressor/1" -n "surya324/submission_msml"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push to Docker Hub
+        run: |
+          docker tag surya324/submission_msml surya324/submission_msml:latest
+          docker push surya324/submission_msml:latest

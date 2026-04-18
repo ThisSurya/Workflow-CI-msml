@@ -1,0 +1,7 @@
+name: latihan-cs-mlflow
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    command: "python modelling_tuning.py"
