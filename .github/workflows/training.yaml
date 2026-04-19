@@ -31,15 +31,15 @@ jobs:
         run: |
           mlflow run MLproject/ --env-manager=local --experiment-name=RandomForestRegressor
 
-      - name: Set up Git LFS
-        run: |
-          git config --global user.name ${{ secrets.USERNAME }}
-          git config --global user.email ${{ secrets.EMAIL }}
-          git lfs install
-          git lfs track "mlruns/**"
-          git add .gitattributes
-          git commit -m "Track large files in mlruns with Git LFS" || true
-          git push origin main
+      # - name: Set up Git LFS
+      #   run: |
+      #     git config --global user.name ${{ secrets.USERNAME }}
+      #     git config --global user.email ${{ secrets.EMAIL }}
+      #     git lfs install
+      #     git lfs track "mlruns/**"
+      #     git add .gitattributes
+      #     git commit -m "Track large files in mlruns with Git LFS" || true
+      #     git push origin main
 
       - name: Commit and Push Artifacts
         run: |
@@ -57,8 +57,9 @@ jobs:
       - name: Build Docker Image with MLflow
         run: |
           # Cari run_id dari mlruns yang baru dibuat
-          RUN_ID=$(ls mlruns/0/ | grep -v 'meta.yaml' | head -1)
-          mlflow models build-docker -m "mlruns/0/${RUN_ID}/artifacts/model" -n "surya324/submission_msml"
+          # RUN_ID=$(ls mlruns/0/ | grep -v 'meta.yaml' | head -1)
+          # mlflow models build-docker -m "mlruns/0/${RUN_ID}/artifacts/model" -n "surya324/submission_msml"
+          mlflow models build-docker -m "models:/RandomForestRegressor/1" -n "surya324/submission_msml"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
