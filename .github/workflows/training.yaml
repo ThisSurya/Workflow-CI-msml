@@ -56,7 +56,9 @@ jobs:
 
       - name: Build Docker Image with MLflow
         run: |
-          mlflow models build-docker -m "models:/RandomForestRegressor/1" -n "surya324/submission_msml"
+          # Cari run_id dari mlruns yang baru dibuat
+          RUN_ID=$(ls mlruns/0/ | grep -v 'meta.yaml' | head -1)
+          mlflow models build-docker -m "mlruns/0/${RUN_ID}/artifacts/model" -n "surya324/submission_msml"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3

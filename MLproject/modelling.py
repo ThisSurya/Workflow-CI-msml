@@ -21,7 +21,7 @@ import datetime
 timelapse = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def main():
-        mlflow.set_tracking_uri("http://127.0.0.1:5000")
+        # Gunakan local filesystem untuk mlruns (tidak butuh server)
         mlflow.set_experiment("RandomForestRegressor")
         mlflow.sklearn.autolog()
 
@@ -49,13 +49,12 @@ def main():
 
             rf_model.fit(X_train, y_train)
 
-            # Log model
+            # Log model ke local mlruns/
             input_example = X_train.iloc[0:5]
             mlflow.sklearn.log_model(
                 sk_model=rf_model,
                 artifact_path="model",
                 input_example=input_example,
-                registered_model_name="RandomForestRegressor",
             )
 
 
