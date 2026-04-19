@@ -28,9 +28,10 @@ jobs:
           pip install mlflow==3.11.1 scikit-learn==1.8.0 pandas==2.3.3 numpy==2.4.2 scikit-optimize==0.10.1 psutil==7.2.2 pyarrow==23.0.1 scipy==1.17.1 cloudpickle==3.1.2
 
       - name: Run MLflow Training
+        id: train
         run: |
-          mlflow run MLproject/ --env-manager=local --experiment-name=RandomForestRegressor
-          RUN_ID=$(cat run_id.txt)
+          mlflow run MLproject/ --env-manager=docker --experiment-name=RandomForestRegressor
+          RUN_ID=$(cat MLproject/run_id.txt)
           echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
 
       # - name: Set up Git LFS
@@ -60,6 +61,7 @@ jobs:
         run: |
           # Cari run_id dari mlruns yang baru dibuat
           # RUN_ID=$(ls mlruns/0/ | grep -v 'meta.yaml' | head -1)
+          RUN_ID=${{ steps.train.outputs.run_id }}
           mlflow models build-docker -m "mlruns/0/${RUN_ID}/artifacts/model" -n "surya324/submission_msml"
           # mlflow models build-docker -m "models:/RandomForestRegressor/1" -n "surya324/submission_msml"
 
