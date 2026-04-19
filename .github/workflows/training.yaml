@@ -42,18 +42,18 @@ jobs:
       #     git commit -m "Track large files in mlruns with Git LFS" || true
       #     git push origin main
 
-      - name: Commit and Push Artifacts
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+      # - name: Commit and Push Artifacts
+      #   run: |
+      #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
 
-          # Move best_params.json to a more visible place if it's inside MLproject or wherever it was generated
-          # Based on modelling_tuning.py, it's generated in the working directory of the script.
-          # If mlflow run starts it in MLproject/, then it's in MLproject/best_params.json
+      #     # Move best_params.json to a more visible place if it's inside MLproject or wherever it was generated
+      #     # Based on modelling_tuning.py, it's generated in the working directory of the script.
+      #     # If mlflow run starts it in MLproject/, then it's in MLproject/best_params.json
 
-          git add mlruns/ MLproject/best_params.json
-          git commit -m "Auto-update model artifacts and parameters [skip ci]" || echo "No changes to commit"
-          git push
+      #     git add mlruns/ MLproject/best_params.json
+      #     git commit -m "Auto-update model artifacts and parameters [skip ci]" || echo "No changes to commit"
+      #     git push
 
       - name: Build Docker Image with MLflow
         run: |
