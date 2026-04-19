@@ -21,7 +21,7 @@ import datetime
 timelapse = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def main():
-        mlflow.sklearn.autolog()
+        # mlflow.sklearn.autolog()
         # Load data
         df = pd.read_csv("./housing_preprocessing.csv")
         X = df.drop("median_house_value", axis=1)
@@ -46,12 +46,12 @@ def main():
         rf_model.fit(X_train, y_train)
 
         # Log model
-        input_example = X_train.iloc[0:5]
-        mlflow.sklearn.log_model(
-            sk_model=rf_model,
-            artifact_path="model",
-            input_example=input_example,
-        )
+        # input_example = X_train.iloc[0:5]
+        # mlflow.sklearn.log_model(
+        #     sk_model=rf_model,
+        #     artifact_path="model",
+        #     input_example=input_example,
+        # )
 
 
 if __name__ == "__main__":
