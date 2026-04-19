@@ -29,8 +29,8 @@ jobs:
 
       - name: Run MLflow Training
         run: |
-          RUN_ID=$(python train.py | grep RUN_ID | cut -d '=' -f2)
           mlflow run MLproject/ --env-manager=local --experiment-name=RandomForestRegressor
+          RUN_ID=$(grep RUN_ID | cut -d '=' -f2)
 
       # - name: Set up Git LFS
       #   run: |
