@@ -21,8 +21,7 @@ import datetime
 timelapse = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def main():
-        # Gunakan local filesystem untuk mlruns (tidak butuh server)
-        mlflow.set_experiment("RandomForestRegressor")
+        # autolog() akan mencatat semua parameter & metrik ke run yang dikelola mlflow run CLI
         mlflow.sklearn.autolog()
 
         # Load data
@@ -37,25 +36,25 @@ def main():
             random_state=42,
         )
 
-        with mlflow.start_run():
-            # Initialize RandomForestRegressor
-            rf_model = RandomForestRegressor(
-                n_estimators=100,
-                max_depth=None,
-                random_state=42,
-                n_jobs=-1
-            )
-            print("[INFO] Training model: RandomForestRegressor on CPU")
+        # Tidak perlu start_run() — mlflow run CLI sudah mengaktifkan run via env vars
+        # Initialize RandomForestRegressor
+        rf_model = RandomForestRegressor(
+            n_estimators=100,
+            max_depth=None,
+            random_state=42,
+            n_jobs=-1
+        )
+        print("[INFO] Training model: RandomForestRegressor on CPU")
 
-            rf_model.fit(X_train, y_train)
+        rf_model.fit(X_train, y_train)
 
-            # Log model ke local mlruns/
-            input_example = X_train.iloc[0:5]
-            mlflow.sklearn.log_model(
-                sk_model=rf_model,
-                artifact_path="model",
-                input_example=input_example,
-            )
+        # Log model ke run yang aktif (dikelola CLI)
+        input_example = X_train.iloc[0:5]
+        mlflow.sklearn.log_model(
+            sk_model=rf_model,
+            artifact_path="model",
+            input_example=input_example,
+        )
 
 
 if __name__ == "__main__":
