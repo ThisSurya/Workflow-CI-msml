@@ -22,10 +22,11 @@ timelapse = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def main():
   with mlflow.start_run() as run:
-        run_id = run.info.run_id
         # autolog() akan mencatat semua parameter & metrik ke run yang dikelola mlflow run CLI
         mlflow.sklearn.autolog()
-        print(f"RUN_ID={run_id}")
+        # print(f"RUN_ID={run_id}")
+        with open("run_id.txt", "w") as f:
+            f.write(run.info.run_id)
 
         # Load data
         df = pd.read_csv("./housing_preprocessing.csv")

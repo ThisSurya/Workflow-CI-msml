@@ -30,7 +30,8 @@ jobs:
       - name: Run MLflow Training
         run: |
           mlflow run MLproject/ --env-manager=local --experiment-name=RandomForestRegressor
-          RUN_ID=$(grep RUN_ID | cut -d '=' -f2)
+          RUN_ID=$(cat run_id.txt)
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
 
       # - name: Set up Git LFS
       #   run: |
