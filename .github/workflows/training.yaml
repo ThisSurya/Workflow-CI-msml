@@ -30,7 +30,7 @@ jobs:
       - name: Run MLflow Training
         id: train
         run: |
-          mlflow run MLproject/ --env-manager=docker --experiment-name=RandomForestRegressor
+          mlflow run MLproject/ --env-manager=local --experiment-name=RandomForestRegressor
           RUN_ID=$(cat MLproject/run_id.txt)
           echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
 
