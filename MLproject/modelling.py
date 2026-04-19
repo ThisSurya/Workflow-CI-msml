@@ -21,7 +21,10 @@ import datetime
 timelapse = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 def main():
-        # mlflow.sklearn.autolog()
+        mlflow.set_tracking_uri("http://127.0.0.1:5000")
+        mlflow.set_experiment("RandomForestRegressor")
+        mlflow.sklearn.autolog()
+
         # Load data
         df = pd.read_csv("./housing_preprocessing.csv")
         X = df.drop("median_house_value", axis=1)
@@ -34,24 +37,26 @@ def main():
             random_state=42,
         )
 
-        # Initialize RandomForestRegressor
-        rf_model = RandomForestRegressor(
-            n_estimators=100,
-            max_depth=None,
-            random_state=42,
-            n_jobs=-1
-        )
-        print("[INFO] Training model: RandomForestRegressor on CPU")
+        with mlflow.start_run():
+            # Initialize RandomForestRegressor
+            rf_model = RandomForestRegressor(
+                n_estimators=100,
+                max_depth=None,
+                random_state=42,
+                n_jobs=-1
+            )
+            print("[INFO] Training model: RandomForestRegressor on CPU")
 
-        rf_model.fit(X_train, y_train)
+            rf_model.fit(X_train, y_train)
 
-        # Log model
-        # input_example = X_train.iloc[0:5]
-        # mlflow.sklearn.log_model(
-        #     sk_model=rf_model,
-        #     artifact_path="model",
-        #     input_example=input_example,
-        # )
+            # Log model
+            input_example = X_train.iloc[0:5]
+            mlflow.sklearn.log_model(
+                sk_model=rf_model,
+                artifact_path="model",
+                input_example=input_example,
+                registered_model_name="RandomForestRegressor",
+            )
 
 
 if __name__ == "__main__":
