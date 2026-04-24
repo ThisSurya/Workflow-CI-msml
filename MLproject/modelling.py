@@ -58,6 +58,7 @@ def main():
             sk_model=rf_model,
             artifact_path="model",
             input_example=input_example,
+            registered_model_name="RandomForestRegressor"
         )
 
 
